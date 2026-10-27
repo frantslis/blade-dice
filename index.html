@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6b6f76" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222428" media="(prefers-color-scheme: dark)">
+<title>Combo Dice</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav><button class="tab on" data-v="game">Game</button><button class="tab" data-v="rules">Rules</button></nav>
+<div id="game">
+<div id="outBox"><div id="out"></div></div>
+<main><div class="stage" id="stage"></div></main>
+<div class="ui"><button id="btn">b.l.a.d.e.</button></div>
+</div>
+<section id="rules" hidden>
+<div class="lang"><div class="seg" role="group" aria-label="Rules language"><button class="on" data-l="ua">UA</button><button data-l="en">ENG</button></div></div>
+<div class="rbody">
+<div class="wrap" id="r-ua" lang="uk">
+<h2>Кубик 1: Базовий трюк / Грайнд (Grind)</h2>
+<ol><li>Soul (або Acid)</li><li>Royale (або Farven / Frontside)</li><li>Miszou (або Mistral / P-star)</li><li>Topside трюк (на вибір того, хто кидає)</li><li>Torque (Makio / або Backslide / Fastslide)</li><li>Air / Spin (стрибок 180/360 або грэб без грайнду)</li></ol>
+<h2>Кубик 2: Стійка та Спин (Stance &amp; Spin)</h2>
+<ol><li>Regular (у своїй зручній стійці, застриб прямо)</li><li>Switch (у незручній стійці / на іншу ногу)</li><li>Fakie (застриб з руху назад)</li><li>Alley-Oop (крутка всередину до грайнду)</li><li>Truespin (крутка назовні від грайнду)</li><li>Out (обов’язковий вихід з трюку на 180 або 360)</li></ol>
+<h2>🎲 Як грати в BLADE за допомогою кубиків:</h2>
+<p><b>Черговість:</b> Гравець кидає кубик.</p>
+<p><b>Завдання трюку:</b> Перший гравець кидає обидва кубики. Наприклад, випадає Soul + Alley-Oop. Гравець має чисто виконати Alley-Oop Soul.</p>
+<p><b>Повторення:</b></p>
+<ul><li>Якщо той, хто задавав, виконав трюк, усі інші гравці по черзі мають його повторити. Хто падає або не робить — отримує літеру: спочатку B, потім L, A, D, E.</li><li>Якщо той, хто задавав, не виконав трюк, хід (і право кидати кубики) переходить до наступного гравця без нарахування літер.</li></ul>
+<p><b>Фінал:</b> Гравець, який першим зібрав повне слово B-L-A-D-E, вибуває з гри. Останній, хто залишився без літер — перемагає.</p>
+</div>
+<div class="wrap" id="r-en" lang="en" hidden>
+<h2>Die 1: Base trick / Grind</h2>
+<ol><li>Soul (or Acid)</li><li>Royale (or Farven / Frontside)</li><li>Miszou (or Mistral / P-star)</li><li>Topside trick (the thrower’s choice)</li><li>Torque (Makio / or Backslide / Fastslide)</li><li>Air / Spin (a 180/360 jump or a grab without a grind)</li></ol>
+<h2>Die 2: Stance &amp; Spin</h2>
+<ol><li>Regular (in your comfortable stance, jumping on straight)</li><li>Switch (in your uncomfortable stance / on the other foot)</li><li>Fakie (jumping on while rolling backwards)</li><li>Alley-Oop (spin inwards into the grind)</li><li>Truespin (spin outwards from the grind)</li><li>Out (a mandatory exit from the trick with a 180 or 360)</li></ol>
+<h2>🎲 How to play BLADE with the dice:</h2>
+<p><b>Order:</b> Player rolls a dice.</p>
+<p><b>The trick:</b> The first player rolls both dice. For example, Soul + Alley-Oop comes up. The player has to land a clean Alley-Oop Soul.</p>
+<p><b>Repeating:</b></p>
+<ul><li>If the player who set the trick lands it, all other players take turns repeating it. Whoever falls or fails gets a letter: first B, then L, A, D, E.</li><li>If the player who set the trick does not land it, the turn (and the right to roll the dice) passes to the next player, and no letters are given.</li></ul>
+<p><b>Finish:</b> The first player to collect the full word B-L-A-D-E is out of the game. The last player left without letters wins.</p>
+</div>
+</div></section>
+<script src="script.js"></script>
+</body>
+</html>
