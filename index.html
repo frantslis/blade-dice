@@ -13,12 +13,17 @@
 <section id="mode"><div class="mwrap">
 <h1 class="mtitle">Choose your<br><span class="mb">B.L.A.<span class="mir">D</span>.E.</span></h1>
 <div class="modes">
-<button class="mode" data-mode="classic"><span><b>Classic</b><small>2 dice</small></span><i>Play</i></button>
-<button class="mode" data-mode="igo"><span><b>In-Grind-Out</b><small>3 dice</small></span><i>Play</i></button>
-<button class="mode" disabled><span><b>Advanced</b><small>with switch up</small></span><i>Soon</i></button>
-<button class="mode" disabled><span><b>God mode</b></span><i>Soon</i></button>
+<button class="mode" data-mode="classic"><span><b>Classic</b><small>Simple 2 real world alike dices.</small></span><i>Play</i></button>
+<button class="mode" data-mode="igo"><span><b>Custom</b><small>Flexible setup of in-grind-out options with slot-alike dices.</small></span><i>Play</i></button>
+<button class="mode" disabled><span><b>Switch-up</b><small>Extended custom mode with one switch-up.</small></span><i>Soon</i></button>
+<button class="mode" disabled><span><b>Goat mode</b><small>Extended switch-up mode.</small></span><i>Soon</i></button>
 </div></div></section>
 <div id="game" hidden>
+<div id="opts" hidden>
+<div class="orow"><span class="optl">Before</span><label class="chip"><input type="checkbox" data-d="0" data-o="r3"><span>360</span></label><label class="chip"><input type="checkbox" data-d="0" data-o="fk"><span>Fakie</span></label><label class="chip"><input type="checkbox" data-d="0" data-o="ds"><span>Darkside</span></label><label class="chip"><input type="checkbox" data-d="0" data-o="os"><span>Outspin</span></label></div>
+<div class="orow"><span class="optl">Grind</span><label class="chip"><input type="checkbox" data-d="1" data-o="sw"><span>Switch</span></label><label class="chip"><input type="checkbox" data-d="1" data-o="ng"><span>Negative</span></label><label class="chip"><input type="checkbox" data-d="1" data-o="tp"><span>Topside</span></label></div>
+<div class="orow"><span class="optl">After</span><label class="chip"><input type="checkbox" data-d="2" data-o="rw"><span>Re-wind</span></label><label class="chip"><input type="checkbox" data-d="2" data-o="f5"><span>540</span></label><label class="chip"><input type="checkbox" data-d="2" data-o="x3"><span>360</span></label></div>
+</div>
 <div id="outBox"><div id="out"></div></div>
 <main><div class="stage" id="stage"></div></main>
 <div class="ui"><button id="btn">b.l.a.d.e.</button></div>
@@ -27,12 +32,16 @@
 <div class="lang"><div class="seg" role="group" aria-label="Rules language"><button class="on" data-l="ua">UA</button><button data-l="en">ENG</button></div></div>
 <div class="rbody">
 <div class="wrap" id="r-ua" lang="uk">
-<!-- 
-    <h2>Кубик 1: Базовий трюк / Грайнд (Grind)</h2>
+<div class="r-classic">
+<h2>Кубик 1: Базовий трюк / Грайнд (Grind)</h2>
 <ol><li>Soul (або Acid)</li><li>Royale (або Farven / Frontside)</li><li>Miszou (або Mistral / P-star)</li><li>Topside трюк (на вибір того, хто кидає)</li><li>Torque (Makio / або Backslide / Fastslide)</li><li>Air / Spin (стрибок 180/360 або грэб без грайнду)</li></ol>
 <h2>Кубик 2: Стійка та Спин (Stance &amp; Spin)</h2>
 <ol><li>Regular (у своїй зручній стійці, застриб прямо)</li><li>Switch (у незручній стійці / на іншу ногу)</li><li>Fakie (застриб з руху назад)</li><li>Alley-Oop (крутка всередину до грайнду)</li><li>Truespin (крутка назовні від грайнду)</li><li>Out (обов’язковий вихід з трюку на 180 або 360)</li></ol>
--->
+</div>
+<div class="r-custom">
+<h2>Режим Custom</h2>
+<p>Розширена версія класичного підходу з 2 кубиками з гнучким налаштуванням. У цьому режимі кожен кубик — це не реальний кубик лише з 6 можливими значеннями (по одному на кожну грань). Тут кожен кубик — це слот-генератор, який показує всі можливі комбінації для відповідної опції. Використовуйте меню чекбоксів для кожного кубика, щоб розширити базові комбінації спінів і грайндів відповідно до вашого вибору, настрою чи рівня.</p>
+</div>
 <h2>🎲 Як грати в BLADE за допомогою кубиків:</h2>
 <p><b>Черговість:</b> Гравець кидає кубик.</p>
 <p><b>Завдання трюку:</b> Перший гравець кидає обидва кубики. Наприклад, випадає Soul + Alley-Oop. Гравець має чисто виконати Alley-Oop Soul.</p>
@@ -41,12 +50,16 @@
 <p><b>Фінал:</b> Гравець, який першим зібрав повне слово B-L-A-D-E, вибуває з гри. Останній, хто залишився без літер — перемагає.</p>
 </div>
 <div class="wrap" id="r-en" lang="en" hidden>
-<!--
-    <h2>Dice 1: Base trick / Grind</h2>
+<div class="r-classic">
+<h2>Dice 1: Base trick / Grind</h2>
 <ol><li>Soul (or Acid)</li><li>Royale (or Farven / Frontside)</li><li>Miszou (or Mistral / P-star)</li><li>Topside trick (the thrower’s choice)</li><li>Torque (Makio / or Backslide / Fastslide)</li><li>Air / Spin (a 180/360 jump or a grab without a grind)</li></ol>
 <h2>Dice 2: Stance &amp; Spin</h2>
 <ol><li>Regular (in your comfortable stance, jumping on straight)</li><li>Switch (in your uncomfortable stance / on the other foot)</li><li>Fakie (jumping on while rolling backwards)</li><li>Alley-Oop (spin inwards into the grind)</li><li>Truespin (spin outwards from the grind)</li><li>Out (a mandatory exit from the trick with a 180 or 360)</li></ol>
--->
+</div>
+<div class="r-custom">
+<h2>Custom mode</h2>
+<p>Extended version of classic 2 dice approach with flexible setup. In this mode each dice is not a real world representation of a dice with just 6 possible values (one for each side). Each dice here is slot-alike generator that shows you all possible combinations for that option. Use checkbox menu for each dice option to extend basic spins and grinds combinations up to your choice/mood/level.</p>
+</div>
 <h2>🎲 How to play BLADE with the dice:</h2>
 <p><b>Order:</b> Player roll a dice.</p>
 <p><b>The trick:</b> The first player rolls both dice. For example, Soul + Alley-Oop comes up. The player has to land a clean Alley-Oop Soul.</p>
