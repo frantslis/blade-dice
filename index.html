@@ -14,17 +14,15 @@
 <h1 class="mtitle">Choose your<br><span class="mb">B.L.A.<span class="mir">D</span>.E.</span></h1>
 <div class="modes">
 <button class="mode" data-mode="classic"><span><b>Classic</b><small>Simple 2 real world alike dices.</small></span><i>Play</i></button>
-<button class="mode" data-mode="igo"><span><b>Custom</b><small>Flexible setup of in-grind-out options with slot-alike dices.</small></span><i>Play</i></button>
+<button class="mode" data-mode="custom"><span><b>Custom</b><small>Flexible setup of in-grind-out options with slot-alike dices.</small></span><i>Play</i></button>
 <button class="mode" disabled><span><b>Switch-up</b><small>Extended custom mode with one switch-up.</small></span><i>Soon</i></button>
 <button class="mode" disabled><span><b>Goat mode</b><small>Extended switch-up mode.</small></span><i>Soon</i></button>
 </div></div></section>
 <div id="game" hidden>
 <div id="opts" hidden>
-<div class="orow"><span class="optl">Before</span><label class="chip"><input type="checkbox" data-d="0" data-o="r3"><span>360</span></label><label class="chip"><input type="checkbox" data-d="0" data-o="fk"><span>Fakie</span></label><label class="chip"><input type="checkbox" data-d="0" data-o="ds"><span>Darkside</span></label><label class="chip"><input type="checkbox" data-d="0" data-o="os"><span>Outspin</span></label></div>
-<div class="orow"><span class="optl">Grind</span><label class="chip"><input type="checkbox" data-d="1" data-o="sw"><span>Switch</span></label><label class="chip"><input type="checkbox" data-d="1" data-o="ng"><span>Negative</span></label><label class="chip"><input type="checkbox" data-d="1" data-o="tp"><span>Topside</span></label></div>
-<div class="orow"><span class="optl">After</span><label class="chip"><input type="checkbox" data-d="2" data-o="rw"><span>Re-wind</span></label><label class="chip"><input type="checkbox" data-d="2" data-o="f5"><span>540</span></label><label class="chip"><input type="checkbox" data-d="2" data-o="x3"><span>360</span></label></div>
+<div class="orow"><span class="optl">Grind</span><label class="chip"><input type="checkbox" data-option="switch"><span>Switch</span></label><label class="chip"><input type="checkbox" data-option="negative"><span>Negative</span></label><label class="chip"><input type="checkbox" data-option="topside"><span>Topside</span></label></div>
 </div>
-<div id="outBox"><div id="out"></div></div>
+<div id="outBox"><div id="out"></div><img id="xg" class="xg" alt="" hidden src="xgrind.png"></div>
 <main><div class="stage" id="stage"></div></main>
 <div class="ui"><button id="btn">b.l.a.d.e.</button></div>
 </div>
@@ -68,6 +66,7 @@
 <p><b>Finish:</b> The first player to collect the full word B-L-A-D-E is out of the game. The last player left without letters wins.</p>
 </div>
 </div></section>
+<img id="hd" class="hd" alt="" hidden src="hotdog.png">
 <script src="script.js"></script>
 </body>
 </html>
