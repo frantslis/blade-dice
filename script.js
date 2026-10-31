@@ -65,9 +65,9 @@ const SOUL_GRINDS = [
   'switch Negative Mizou', 'switch Negative Mistral', 'switch Negative P-star',
   'switch Negative Soul', 'switch Negative Acid', 'switch Negative Makio', 'Topside P-Star',
   'Topside Makio', 'Topside Mizou', 'Topside Mistrial', 'Topside Torque Soul', 'Topside P-Star',
-  'Topside soul', 'Topside acid', 'switch Topside P-Star', 'switch Topside Makio',
+  'Topside Soul', 'Topside Acid', 'switch Topside P-Star', 'switch Topside Makio',
   'switch Topside Mizou', 'switch Topside Mistrial', 'switch Topside Torque Soul',
-  'switch Topside soul', 'switch Topside acid',
+  'switch Topside Soul', 'switch Topside Acid',
 ];
 
 /** Custom mode: Groove style grinds (Grind dice). */
@@ -909,11 +909,11 @@ grindOptionInputs.forEach((checkbox) => {
 updateGrindOptionInputs();
 
 /* ---------------------------------------------------------------------
- * Grind list popup: hold a checked main checkbox (Basic, Exotic, Topside) for 2 seconds
+ * Grind list popup: hold a checked main checkbox (Basic, Exotic, Topside) for 1 second
  * to see the grinds that belong to it.
  * ------------------------------------------------------------------- */
 
-const LONG_PRESS_MS = 2000;
+const LONG_PRESS_MS = 1000;
 const LONG_PRESS_MOVE_TOLERANCE_PX = 10;
 const POPUP_MIN_COLUMN_WIDTH_PX = 135;
 const POPUP_ROW_HEIGHT_PX = 30;
@@ -924,7 +924,7 @@ const popupTitle = document.getElementById('popupTitle');
 const popupInfo = document.getElementById('popupInfo');
 const popupList = document.getElementById('popupList');
 const popupCloseButton = document.getElementById('popupClose');
-let popupOpenedAt = 0;
+let pressStartedOnBackdrop = false;   // true when the current press began on the dark background
 
 /** Sort order in the popup: plain grinds, then negative, switch and switch + negative variants. */
 const getVariantRank = (grind) => (grind.isSwitch ? 2 : 0) + (grind.isNegative ? 1 : 0);
@@ -970,7 +970,7 @@ function openGrindPopup(groupName) {
   });
 
   grindPopup.hidden = false;
-  popupOpenedAt = Date.now();
+  pressStartedOnBackdrop = false;
   layoutPopupColumns();
   popupCloseButton.focus();
   try { if (navigator.vibrate) navigator.vibrate(25); } catch (error) { /* vibration is optional */ }
@@ -980,9 +980,12 @@ function closeGrindPopup() {
   grindPopup.hidden = true;
 }
 
-// Tap on the dark background closes the popup (ignored right after opening, while the finger is still down).
+// A tap on the dark background closes the popup. The press must also START there, so the finger
+// that opened the popup with a long press cannot close it again when it is lifted.
+grindPopup.addEventListener('pointerdown', (event) => { pressStartedOnBackdrop = event.target === grindPopup; });
 grindPopup.addEventListener('click', (event) => {
-  if (event.target === grindPopup && Date.now() - popupOpenedAt > 400) closeGrindPopup();
+  if (event.target === grindPopup && pressStartedOnBackdrop) closeGrindPopup();
+  pressStartedOnBackdrop = false;
 });
 popupCloseButton.addEventListener('click', closeGrindPopup);
 document.addEventListener('keydown', (event) => {
@@ -990,14 +993,24 @@ document.addEventListener('keydown', (event) => {
 });
 window.addEventListener('resize', () => { if (!grindPopup.hidden) layoutPopupColumns(); });
 
-/** Long press on a checked main checkbox opens the popup; the release then does not uncheck it. */
-document.querySelectorAll('.chip.main input').forEach((input) => {
-  const chip = input.closest('.chip');
+/** True on phones and tablets: touch screens use touch events (pointer events can be cancelled by a long press). */
+const SUPPORTS_TOUCH_EVENTS = 'ontouchstart' in window;
+
+/**
+ * Ways to open the popup for a checked main checkbox (the checkbox state never changes):
+ *  - touch screen: hold for 1 second;
+ *  - mouse: double-click, right-click, or hold the button for 1 second.
+ * The events are attached to the whole chip, so a press anywhere on it counts.
+ */
+document.querySelectorAll('.chip.main').forEach((chip) => {
+  const input = chip.querySelector('input');
   const groupName = input.dataset.option;
   let timerId = null;
   let startX = 0;
   let startY = 0;
   let longPressFired = false;
+  let lastPointerType = 'mouse';
+  let optionsBeforeClick = null;   // state before the first click of a possible double-click
 
   const cancelHold = () => {
     clearTimeout(timerId);
@@ -1005,11 +1018,13 @@ document.querySelectorAll('.chip.main input').forEach((input) => {
     chip.classList.remove('holding');
   };
 
-  input.addEventListener('pointerdown', (event) => {
+  /** Starts the long-press timer (LONG_PRESS_MS); it only runs for a checked checkbox. */
+  const startHold = (x, y) => {
     longPressFired = false;
+    cancelHold();
     if (!input.checked) return;
-    startX = event.clientX;
-    startY = event.clientY;
+    startX = x;
+    startY = y;
     chip.classList.add('holding');
     timerId = setTimeout(() => {
       timerId = null;
@@ -1017,18 +1032,69 @@ document.querySelectorAll('.chip.main input').forEach((input) => {
       chip.classList.remove('holding');
       openGrindPopup(groupName);
     }, LONG_PRESS_MS);
+  };
+
+  /** Cancels the hold when the finger or mouse moves too far. */
+  const moveHold = (x, y) => {
+    if (timerId && Math.hypot(x - startX, y - startY) > LONG_PRESS_MOVE_TOLERANCE_PX) cancelHold();
+  };
+
+  // Mouse and pen: pointer events (touch too, when the browser has no touch events).
+  const ignoreTouchPointer = (event) => event.pointerType === 'touch' && SUPPORTS_TOUCH_EVENTS;
+  chip.addEventListener('pointerdown', (event) => {
+    lastPointerType = event.pointerType || 'mouse';
+    if (ignoreTouchPointer(event)) return;
+    if (event.button > 0) { longPressFired = false; return; }   // only the main button holds
+    startHold(event.clientX, event.clientY);
   });
-  input.addEventListener('pointermove', (event) => {
-    if (timerId && Math.hypot(event.clientX - startX, event.clientY - startY) > LONG_PRESS_MOVE_TOLERANCE_PX) cancelHold();
+  chip.addEventListener('pointermove', (event) => { if (!ignoreTouchPointer(event)) moveHold(event.clientX, event.clientY); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach((type) => {
+    chip.addEventListener(type, (event) => { if (!ignoreTouchPointer(event)) cancelHold(); });
   });
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach((type) => input.addEventListener(type, cancelHold));
-  input.addEventListener('click', (event) => {
-    if (longPressFired) {            // the press was a long press: keep the checkbox as it is
+
+  // Touch screens: touch events keep working during a long press.
+  chip.addEventListener('touchstart', (event) => {
+    lastPointerType = 'touch';
+    startHold(event.touches[0].clientX, event.touches[0].clientY);
+  }, { passive: true });
+  chip.addEventListener('touchmove', (event) => moveHold(event.touches[0].clientX, event.touches[0].clientY), { passive: true });
+  chip.addEventListener('touchend', (event) => {
+    cancelHold();
+    if (longPressFired && event.cancelable) event.preventDefault();   // no click after a long press
+  });
+  chip.addEventListener('touchcancel', cancelHold);
+
+  // A long press must not toggle the checkbox when the finger or button is released.
+  chip.addEventListener('click', (event) => {
+    if (longPressFired) {
       event.preventDefault();
       longPressFired = false;
     }
   });
-  input.addEventListener('contextmenu', (event) => { if (timerId || longPressFired) event.preventDefault(); });
+
+  // Double-click: the two clicks toggle the checkbox twice, so the state from before the first click
+  // is restored (this also keeps Switch and Negative) and the popup opens.
+  chip.addEventListener('mousedown', (event) => {
+    if (event.detail === 1) optionsBeforeClick = { options: { ...state.grindOptions }, wasChecked: input.checked };
+  });
+  chip.addEventListener('dblclick', () => {
+    if (!optionsBeforeClick || !optionsBeforeClick.wasChecked) return;
+    Object.assign(state.grindOptions, optionsBeforeClick.options);
+    updateGrindOptionInputs();
+    openGrindPopup(groupName);
+  });
+
+  // Right-click with a mouse opens the popup instead of the browser menu.
+  chip.addEventListener('contextmenu', (event) => {
+    if (lastPointerType === 'mouse' && input.checked) {
+      event.preventDefault();
+      openGrindPopup(groupName);
+    } else if (timerId || longPressFired || lastPointerType === 'touch') {
+      event.preventDefault();        // touch long press: no browser menu
+    }
+  });
+  chip.addEventListener('selectstart', (event) => event.preventDefault());
+  chip.addEventListener('dragstart', (event) => event.preventDefault());
 });
 
 rollButton.addEventListener('click', rollDice);

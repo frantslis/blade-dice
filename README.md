@@ -1,5 +1,6 @@
 # b.l.a.d.e. dice
 
+
 Mobile-first web game: tap **b.l.a.d.e.** and two 3D dice fall, showing a trick combination for the BLADE game. The **Mode** tab is the main page for choosing a game mode (Classic 2 dice and Custom (3 slot-like dice) are playable, the others are coming soon). The Mode/Game/Rules menu appears only after a mode is chosen. The **Rules** tab has the rules and dice lists in Ukrainian (UA) and English (ENG).
 
 ## Files
@@ -22,7 +23,7 @@ Grinds are sorted into Basic and Exotic categories, plus the Topside grinds. The
 - **Switch / Negative:** Switch adds the switch variants, Negative adds the negative variants, and both together also add the switch + negative variants. The plain grinds always stay. They are locked until a main checkbox is checked (Negative is also locked while Topside is the only main one, because there are no negative topside grinds).
 - **All three main checkboxes + Switch and/or Negative:** the full collection of grinds.
 - **Nothing checked:** only Hot Dog is available and it fills every side of the Grind dice (an Easter egg). The same happens when no grind matches.
-- **Grind list popup:** hold a checked main checkbox (Basic, Exotic or Topside) for 2 seconds to see its grinds, including the switch / negative variants that are currently checked. The list uses several columns when the screen is short. Close it with the X, the dark background or Esc.
+- **Grind list popup:** on a checked main checkbox (Basic, Exotic or Topside), hold for 1 second (touch screen), or double-click or right-click (mouse), to see its grinds, including the switch / negative variants that are currently checked. The checkbox state never changes. The list uses several columns when the screen is short. Close it with the X, the dark background or Esc.
 - **No repeats:** the same grind never comes up twice in a row (unless it is the only one available).
 
 The result is shown only after the dice have landed. Changing a checkbox never changes the dice or the result on screen; it only decides which grinds the next roll can use. All lists are at the top of `script.js`.
