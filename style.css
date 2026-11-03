@@ -71,8 +71,9 @@ nav{display:flex;width:100%;gap:8px;padding:10px 14px 0}
 .chip input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;-webkit-appearance:none;appearance:none}
 .chip span{display:inline-block;padding:6px 12px;border-radius:999px;background:var(--tab-bg);color:var(--ink);font:700 13px system-ui,sans-serif}
 .chip{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:none}
-.chip.main span{position:relative;overflow:hidden;padding:9px 16px;font-size:15px}
-.chip.main span::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:0;background:currentColor;opacity:.55}
+.chip span{position:relative;overflow:hidden}
+.chip.main span{padding:9px 16px;font-size:15px}
+.chip span::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:0;background:currentColor;opacity:.55}
 .chip.holding span::after{width:100%;transition:width 1s linear}
 .popup{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.55)}
 .popup-card{width:min(100%,640px);max-height:88vh;display:flex;flex-direction:column;background:var(--btn);color:var(--btn-ink);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.45);overflow:hidden}
@@ -82,6 +83,7 @@ nav{display:flex;width:100%;gap:8px;padding:10px 14px 0}
 .popup-close{flex:none;width:36px;height:36px;border:0;border-radius:50%;background:var(--face-off);color:var(--btn-ink);font-size:24px;line-height:1}
 #popupList{list-style:none;margin:0;padding:6px 18px 18px;overflow-y:auto;column-gap:20px;font-size:14px;line-height:1.3}
 #popupList li{break-inside:avoid;padding:4px 0}
+#popupList li small{display:block;font-size:12px;opacity:.65}
 .chip input:disabled{cursor:not-allowed}
 .chip input:disabled+span{opacity:.4}
 .chip input:checked+span{background:var(--tab-on);color:var(--tab-on-ink)}

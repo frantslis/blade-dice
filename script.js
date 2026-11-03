@@ -107,49 +107,67 @@ const EXOTIC_GRINDS = [
 /** Easter egg: the only grind available while no Grind checkbox is checked (or none matches). */
 const EASTER_EGG_GRIND_NAME = 'Hot Dog';
 
-/** Before dice (dice 1): values for any Soul style grind. */
-const SOUL_BEFORE_VALUES = [
-  'Forward', 'Alleyoop', '360 inspin', '360 outspin', 'truspin', 'zero spin', 'inspin 180',
-  'truspin 360', 'outspin 180', 'alleyoop 360', 'darkside', 'disaster',
-];
-
 /**
- * Before dice (dice 1): values for Groove style grinds.
- * needsBackside: true  -> only for grinds with "backside" in the name,
- *                false -> only for grinds without it,
- *                undefined -> for every Groove grind.
+ * Value groups of the Before (dice 1) and After (dice 3) checkboxes. Every checkbox adds its values.
+ * A value can have these conditions (no condition = always allowed):
+ *  - grindGroups:   grind groups it can be used with ('soul' and / or 'groove').
+ *  - needsBackside: true -> only for grinds with "backside" in the name,
+ *                   false -> only for grinds without it.
+ *  - soulStall:     'front' | 'back' -> for Soul grinds the value is only used when the Before value
+ *                   is a face front stall / a face back stall (see the stall lists below).
  */
-const GROOVE_BEFORE_VALUES = [
-  { text: 'Forward' },
-  { text: '270', needsBackside: true },
-  { text: 'truspin 270', needsBackside: false },
-  { text: 'zero spin' },
-  { text: 'inspin 270', needsBackside: true },
-  { text: 'outspin 270', needsBackside: false },
+const BEFORE_VALUE_GROUPS = [
+  { key: 'basic', label: 'Basic', values: [{ text: 'Forward' }, { text: 'Zero spin' }] },
+  { key: 'spin180', label: '180', values: [
+    { text: 'Alleyoop', grindGroups: ['soul'] }, { text: 'Truspin', grindGroups: ['soul'] },
+    { text: 'Inspin 180', grindGroups: ['soul'] }, { text: 'Outspin 180', grindGroups: ['soul'] },
+  ] },
+  { key: 'spin270', label: '270', values: [
+    { text: '270', grindGroups: ['groove'], needsBackside: true },
+    { text: 'Truspin 270', grindGroups: ['groove'], needsBackside: false },
+    { text: 'Inspin 270', grindGroups: ['groove'], needsBackside: true },
+    { text: 'Outspin 270', grindGroups: ['groove'], needsBackside: false },
+  ] },
+  { key: 'spin360', label: '360', values: [
+    { text: '360 inspin', grindGroups: ['soul'] }, { text: '360 outspin', grindGroups: ['soul'] },
+    { text: 'Truspin 360', grindGroups: ['soul'] }, { text: 'Alleyoop 360', grindGroups: ['soul'] },
+  ] },
+  { key: 'darksideDisaster', label: 'D&D', values: [{ text: 'Darkside' }, { text: 'Disaster' }] },
 ];
 
+const AFTER_VALUE_GROUPS = [
+  { key: 'basic', label: 'Basic', values: [
+    { text: 'Forward', soulStall: 'front' }, { text: 'Backward', soulStall: 'back' },
+  ] },
+  { key: 'spin180', label: '180', values: [
+    { text: '180', grindGroups: ['soul'] }, { text: '180 rewind', grindGroups: ['soul'] },
+  ] },
+  { key: 'spin270', label: '270', values: [
+    { text: '270', grindGroups: ['groove'] }, { text: '270 rewind', grindGroups: ['groove'] },
+  ] },
+  { key: 'spin360', label: '360', values: [
+    { text: '360', grindGroups: ['soul'] }, { text: '360 rewind', grindGroups: ['soul'] },
+  ] },
+  { key: 'spin450', label: '450', values: [
+    { text: '450', grindGroups: ['groove'] }, { text: '450 rewind', grindGroups: ['groove'] },
+  ] },
+  { key: 'spin540', label: '540', values: [
+    { text: '540', grindGroups: ['soul'] }, { text: '540 rewind', grindGroups: ['soul'] },
+  ] },
+];
+
+/** Used when no checkbox of the dice is checked, or the checked ones give no value for the grind. */
+const BEFORE_FALLBACK_VALUES = ['Forward'];
+const AFTER_FALLBACK_VALUES = ['Forward'];
+
 /**
- * Soul grinds: the After value (dice 3) depends on the Before value (dice 1).
- * A Before value that is a "face front stall" or a "face back stall" decides how the grind is left.
+ * Soul grinds: the After value depends on the Before value. A Before value is either a
+ * "face front stall" (the grind is left forward) or a "face back stall" (left backward).
  */
 const SOUL_FRONT_STALL_BEFORE_VALUES = [
-  'Forward', '360 inspin', '360 outspin', 'inspin 180', 'outspin 180', 'darkside', 'disaster',
+  'Forward', '360 inspin', '360 outspin', 'Inspin 180', 'Outspin 180', 'Darkside', 'Disaster',
 ];
-const SOUL_BACK_STALL_BEFORE_VALUES = ['Alleyoop', 'truspin', 'zero spin', 'truspin 360', 'alleyoop 360'];
-
-/** After values (dice 3) for Soul grinds: out from a face front stall. */
-const SOUL_AFTER_FRONT_STALL_VALUES = [
-  'Forward', '180', '360', '180 rewind', '360 rewind', '540', '540 rewind',
-];
-
-/** After values (dice 3) for Soul grinds: out from a face back stall. */
-const SOUL_AFTER_BACK_STALL_VALUES = [
-  'Backward', '180', '360', '180 rewind', '360 rewind', '540', '540 rewind',
-];
-
-
-/** After dice (dice 3): values for Groove style grinds. */
-const GROOVE_AFTER_VALUES = ['Forward', 'Backward', '270', '270 rewind', '450', '450 rewind'];
+const SOUL_BACK_STALL_BEFORE_VALUES = ['Alleyoop', 'Truspin', 'Zero spin', 'Truspin 360', 'Alleyoop 360'];
 
 /* ---------------------------------------------------------------------
  * 3. Combination logic (Custom mode)
@@ -166,8 +184,9 @@ const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1);
 /** Key for case-insensitive comparison and de-duplication. */
 const toKey = (text) => text.trim().toLowerCase();
 
-/** Lower-case keys of the Before values that start a face front stall (Soul grinds). */
+/** Lower-case keys of the Before values that are a face front stall / a face back stall (Soul grinds). */
 const SOUL_FRONT_STALL_KEYS = new Set(SOUL_FRONT_STALL_BEFORE_VALUES.map(toKey));
+const SOUL_BACK_STALL_KEYS = new Set(SOUL_BACK_STALL_BEFORE_VALUES.map(toKey));
 
 const BASIC_GRIND_KEYS = new Set(BASIC_GRINDS.map(toKey));
 const EXOTIC_GRIND_KEYS = new Set(EXOTIC_GRINDS.map(toKey));
@@ -228,16 +247,12 @@ const GRIND_CATALOG = buildGrindCatalog();
  *
  * Main checkboxes: Basic, Exotic, Topside (any of them can be checked together).
  * Additional checkboxes: Switch, Negative.
- *  - Main checkboxes give the plain grinds of the checked groups (no switch / negative variants).
+ *  - Main checkboxes give the regular grinds of the checked groups (no switch / negative variants).
  *  - Switch adds the switch variants, Negative adds the negative variants, and both together
  *    also add the switch + negative variants of the checked groups.
- *  - All three main checkboxes plus Switch and/or Negative: the full collection of grinds.
  *  - Nothing checked (or no grind matches): only the Easter egg grind (Hot Dog).
  */
-function getAvailableGrinds(options) {
-  const allMainChecked = options.basic && options.exotic && options.topside;
-  if (allMainChecked && (options.switch || options.negative)) return GRIND_CATALOG.slice();
-
+function selectGrindsByGrindOptions(options) {
   const matches = GRIND_CATALOG.filter((grind) => {
     const groupChecked = grind.isTopside
       ? options.topside
@@ -250,44 +265,109 @@ function getAvailableGrinds(options) {
   return GRIND_CATALOG.filter((grind) => grind.key === toKey(EASTER_EGG_GRIND_NAME));
 }
 
-/** Values the Before dice can show for the given grind. */
-function getBeforeValues(grind) {
-  if (grind.group === 'soul') return formatValues(SOUL_BEFORE_VALUES);
-  return formatValues(
-    GROOVE_BEFORE_VALUES
-      .filter((value) => value.needsBackside === undefined || value.needsBackside === grind.hasBackside)
-      .map((value) => value.text));
-}
+/** True when at least one checkbox of an options object (Before, After, ...) is checked. */
+const hasCheckedOption = (options) => Object.values(options).some(Boolean);
 
 /**
- * Values the After dice can show.
- * Soul grinds: the list depends on the Before value (face front stall or face back stall).
- * Groove grinds: one list for every Before value.
+ * Stall type of a Before value for Soul grinds: 'front', 'back', or null when it is unknown
+ * (or not given). The stall type decides whether Forward or Backward can follow.
  */
-function getAfterValues(grind, beforeValue) {
-  if (grind.group === 'groove') return formatValues(GROOVE_AFTER_VALUES);
+function getSoulStallType(beforeValue) {
+  const key = beforeValue ? toKey(beforeValue) : '';
+  if (SOUL_FRONT_STALL_KEYS.has(key)) return 'front';
+  if (SOUL_BACK_STALL_KEYS.has(key)) return 'back';
+  return null;
+}
 
-  const isFaceFrontStall = SOUL_FRONT_STALL_KEYS.has(toKey(beforeValue));
-  return formatValues(isFaceFrontStall ? SOUL_AFTER_FRONT_STALL_VALUES : SOUL_AFTER_BACK_STALL_VALUES);
+/** True when every value of a checkbox group is only used with Groove grinds. */
+const isGrooveOnlyGroup = (valueGroup) => valueGroup.values.every((value) =>
+  value.grindGroups && value.grindGroups.length === 1 && value.grindGroups[0] === 'groove');
+
+/**
+ * Keys of the Before / After checkboxes whose values exist only for Groove grinds
+ * (Before 270, After 270 and 450). Topside grinds are Soul grinds, so they cannot use them.
+ */
+const GROOVE_ONLY_BEFORE_KEYS = new Set(BEFORE_VALUE_GROUPS.filter(isGrooveOnlyGroup).map((group) => group.key));
+const GROOVE_ONLY_AFTER_KEYS = new Set(AFTER_VALUE_GROUPS.filter(isGrooveOnlyGroup).map((group) => group.key));
+
+/**
+ * Collects the values of the checked checkboxes that fit a grind.
+ * @param valueGroups   BEFORE_VALUE_GROUPS or AFTER_VALUE_GROUPS
+ * @param checkedOptions object such as { basic: true, spin180: false, ... }
+ * @param grind         the rolled grind (its group and "backside" decide which values fit)
+ * @param soulStallType 'front' | 'back' | null - the stall type of the Before value (After dice only)
+ * @returns {string[]} display texts; empty when nothing fits
+ */
+function collectValues(valueGroups, checkedOptions, grind, soulStallType) {
+  const values = [];
+  valueGroups.forEach((valueGroup) => {
+    if (!checkedOptions[valueGroup.key]) return;
+    valueGroup.values.forEach((value) => {
+      const fitsGrindGroup = !value.grindGroups || value.grindGroups.includes(grind.group);
+      const fitsBackside = value.needsBackside === undefined || value.needsBackside === grind.hasBackside;
+      const fitsStall = !value.soulStall || grind.group !== 'soul' || !soulStallType || value.soulStall === soulStallType;
+      if (fitsGrindGroup && fitsBackside && fitsStall) values.push(value.text);
+    });
+  });
+  return formatValues(values);
 }
 
 /**
- * Creates a full combination. The grind is chosen first, then the Before value from the lists
- * that belong to that grind, and last the After value (which can depend on the Before value).
- * `previousGrindKey` is the key of the grind that was shown before; it is not chosen again.
+ * Values the Before dice can show for the given grind (the list can be empty, for example when
+ * only "270" is checked and the grind is a Soul grind).
+ */
+const getBeforeValues = (grind, beforeOptions) =>
+  collectValues(BEFORE_VALUE_GROUPS, beforeOptions, grind, null);
+
+/**
+ * Values the After dice can show for the given grind. For Soul grinds Forward / Backward also
+ * depend on the Before value; without a Before value that condition is ignored.
+ */
+const getAfterValues = (grind, afterOptions, beforeValue) =>
+  collectValues(AFTER_VALUE_GROUPS, afterOptions, grind, getSoulStallType(beforeValue));
+
+/**
+ * Grinds the next roll can use: the grinds chosen by the Grind checkboxes, limited to the ones
+ * that have at least one value for the checked Before and After checkboxes (for example with only
+ * "270" checked in Before, Soul grinds are left out). A group without a checked checkbox does not
+ * limit the grinds. If no grind fits, the Grind selection is used as it is and the dice fall back
+ * to Forward.
+ * @param settings { grind, before, after } - the checkbox options of the three groups
+ */
+function getAvailableGrinds(settings) {
+  const grinds = selectGrindsByGrindOptions(settings.grind);
+  const isBeforeChecked = hasCheckedOption(settings.before);
+  const isAfterChecked = hasCheckedOption(settings.after);
+
+  const eligibleGrinds = grinds.filter((grind) =>
+    (!isBeforeChecked || getBeforeValues(grind, settings.before).length > 0) &&
+    (!isAfterChecked || getAfterValues(grind, settings.after).length > 0));
+  return eligibleGrinds.length > 0 ? eligibleGrinds : grinds;
+}
+
+/**
+ * Creates a full combination. The grind is chosen first, then the Before value from the values
+ * that fit that grind, and last the After value (which can depend on the Before value).
  * Each face set holds the values around a die and the index of the one on top.
+ * @param availableGrinds   grinds the roll can use (see getAvailableGrinds)
+ * @param previousGrindKey  key of the grind shown before; it is not chosen again
+ * @param settings          { grind, before, after } - the checkbox options
  * @returns {{grind:object, faceSets:{values:string[],topIndex:number}[]}} order: Before, Grind, After
  */
-function generateCombination(availableGrinds, previousGrindKey) {
+function generateCombination(availableGrinds, previousGrindKey, settings) {
   // The same grind never comes up twice in a row (unless it is the only one available).
   const candidates = availableGrinds.length > 1
     ? availableGrinds.filter((item) => item.key !== previousGrindKey)
     : availableGrinds;
   const grind = candidates[randomIndex(candidates.length)];
   const grindIndex = availableGrinds.indexOf(grind);
-  const beforeValues = getBeforeValues(grind);
+
+  let beforeValues = getBeforeValues(grind, settings.before);
+  if (beforeValues.length === 0) beforeValues = formatValues(BEFORE_FALLBACK_VALUES);
   const beforeIndex = randomIndex(beforeValues.length);
-  const afterValues = getAfterValues(grind, beforeValues[beforeIndex]);
+
+  let afterValues = getAfterValues(grind, settings.after, beforeValues[beforeIndex]);
+  if (afterValues.length === 0) afterValues = formatValues(AFTER_FALLBACK_VALUES);
 
   return {
     grind,
@@ -328,7 +408,12 @@ const state = {
   generation: 0,         // increases on every mode start, used to ignore stale timers
   combination: null,     // current Custom mode combination
   grindOptions: { basic: false, exotic: false, switch: false, negative: false, topside: false },
+  beforeOptions: { basic: false, spin180: false, spin270: false, spin360: false, darksideDisaster: false },
+  afterOptions: { basic: false, spin180: false, spin270: false, spin360: false, spin450: false, spin540: false },
 };
+
+/** The checkbox options of the three groups, in the form the combination functions use. */
+const getSettings = () => ({ grind: state.grindOptions, before: state.beforeOptions, after: state.afterOptions });
 
 /* ---------------------------------------------------------------------
  * 5. Dice rendering
@@ -508,7 +593,8 @@ function startGameMode(modeKey) {
     state.dice.push(die);
     placeDieAtRandom(die, CUSTOM_DIE_YAW_DEG);
   }
-  state.combination = generateCombination(getAvailableGrinds(state.grindOptions));
+  const settings = getSettings();
+  state.combination = generateCombination(getAvailableGrinds(settings), undefined, settings);
   applyCombinationToDice(state.combination);
 }
 
@@ -566,7 +652,8 @@ function rollDice() {
   const isCustom = state.mode.type === 'custom';
   if (isCustom) {
     const previousGrindKey = state.combination ? state.combination.grind.key : undefined;
-    state.combination = generateCombination(getAvailableGrinds(state.grindOptions), previousGrindKey);
+    const settings = getSettings();
+    state.combination = generateCombination(getAvailableGrinds(settings), previousGrindKey, settings);
   }
 
   state.dice.forEach((die, index) => {
@@ -865,52 +952,115 @@ document.querySelectorAll('.mode[data-mode]').forEach((card) => {
 });
 
 /*
- * Grind checkboxes. Main: Basic, Exotic, Topside. Additional: Switch, Negative.
- * They only change which grinds the NEXT roll can use. The dice and the result on screen
- * stay as they are until the button is pressed.
+ * Option checkboxes: Grind (main: Basic, Exotic, Topside; additional: Switch, Negative), Before and After.
+ * They only change which values the NEXT roll can use. The dice and the result on screen stay as they
+ * are until the button is pressed.
+ *
+ * Rules that keep the checkboxes consistent (enforceOptionRules and getLockReason):
+ *  - Switch and Negative need a main Grind checkbox; Negative is also locked while Topside is the only
+ *    main one (there are no negative Topside grinds).
+ *  - Topside grinds are Soul grinds. While Topside is the only main Grind checkbox, the Groove-only values
+ *    (Before 270, After 270 and 450) are locked and unchecked.
+ *  - The other way round, Topside is locked while only Groove-only values are checked and neither
+ *    Basic nor Exotic is checked.
+ *  - With Basic or Exotic checked the dice can show Groove and Soul grinds, so everything stays available.
  */
-const grindOptionInputs = document.querySelectorAll('#opts input');
+const OPTION_GROUPS = [
+  { attribute: 'option', options: state.grindOptions },
+  { attribute: 'before', options: state.beforeOptions },
+  { attribute: 'after', options: state.afterOptions },
+];
+const optionInputs = document.querySelectorAll('#opts input[data-option], #opts input[data-before], #opts input[data-after]');
 
-/**
- * Shows the option state in the checkboxes. Switch and Negative are locked until a main checkbox
- * is checked, and Negative is also locked while Topside is the only main one (there are no
- * negative topside grinds, so it would change nothing).
- */
-function updateGrindOptionInputs() {
-  const options = state.grindOptions;
-  const hasMainOption = options.basic || options.exotic || options.topside;
-  const onlyTopside = options.topside && !options.basic && !options.exotic;
-  grindOptionInputs.forEach((input) => {
-    const name = input.dataset.option;
-    input.checked = options[name];
-    if (name === 'switch') input.disabled = !hasMainOption;
-    if (name === 'negative') input.disabled = !hasMainOption || onlyTopside;
+/** The option group (Grind, Before or After) a checkbox belongs to, and its key inside that group. */
+function getOptionGroupOfInput(input) {
+  const group = OPTION_GROUPS.find((candidate) => input.dataset[candidate.attribute] !== undefined);
+  return { group, key: input.dataset[group.attribute] };
+}
+
+/** Short description of the checked main Grind checkboxes. */
+function summarizeGrindSelection() {
+  const { basic, exotic, topside } = state.grindOptions;
+  return {
+    hasMainOption: basic || exotic || topside,
+    hasBasicOrExotic: basic || exotic,
+    isTopsideOnly: topside && !basic && !exotic,
+  };
+}
+
+/** True when some Before / After checkboxes are checked and all of them are Groove-only. */
+function areOnlyGrooveValuesChecked() {
+  const checkedKeys = (options) => Object.keys(options).filter((key) => options[key]);
+  const checkedBeforeKeys = checkedKeys(state.beforeOptions);
+  const checkedAfterKeys = checkedKeys(state.afterOptions);
+  if (checkedBeforeKeys.length + checkedAfterKeys.length === 0) return false;
+  return checkedBeforeKeys.every((key) => GROOVE_ONLY_BEFORE_KEYS.has(key)) &&
+    checkedAfterKeys.every((key) => GROOVE_ONLY_AFTER_KEYS.has(key));
+}
+
+/** Why a checkbox is locked (shown as its tooltip), or an empty string when it can be used. */
+function getLockReason(attribute, key) {
+  const { hasMainOption, hasBasicOrExotic, isTopsideOnly } = summarizeGrindSelection();
+
+  if (attribute === 'option') {
+    if ((key === 'switch' || key === 'negative') && !hasMainOption) return 'Check Basic, Exotic or Topside first';
+    if (key === 'negative' && isTopsideOnly) return 'There are no negative Topside grinds';
+    if (key === 'topside' && !state.grindOptions.topside && !hasBasicOrExotic && areOnlyGrooveValuesChecked()) {
+      return 'Topside grinds are Soul grinds, but the checked values (270, 450) are only for Groove grinds. Check Basic or Exotic, or uncheck them';
+    }
+    return '';
+  }
+
+  const grooveOnlyKeys = attribute === 'before' ? GROOVE_ONLY_BEFORE_KEYS : GROOVE_ONLY_AFTER_KEYS;
+  if (isTopsideOnly && grooveOnlyKeys.has(key)) {
+    return 'Only for Groove grinds. Topside grinds are Soul grinds: check Basic or Exotic to use it';
+  }
+  return '';
+}
+
+/** Unchecks the options that the current selection does not allow. */
+function enforceOptionRules() {
+  const grindOptions = state.grindOptions;
+  const { hasMainOption, isTopsideOnly } = summarizeGrindSelection();
+
+  if (!hasMainOption) {
+    grindOptions.switch = false;
+    grindOptions.negative = false;
+  }
+  if (isTopsideOnly) {
+    grindOptions.negative = false;
+    GROOVE_ONLY_BEFORE_KEYS.forEach((key) => { state.beforeOptions[key] = false; });
+    GROOVE_ONLY_AFTER_KEYS.forEach((key) => { state.afterOptions[key] = false; });
+  }
+}
+
+/** Shows the state of all option checkboxes: checked, locked, and the tooltip with the reason. */
+function renderOptionInputs() {
+  optionInputs.forEach((input) => {
+    const { group, key } = getOptionGroupOfInput(input);
+    const chip = input.closest('.chip');
+    if (chip.dataset.baseTitle === undefined) chip.dataset.baseTitle = chip.title;   // remember the normal tooltip
+
+    const lockReason = getLockReason(group.attribute, key);
+    input.checked = group.options[key];
+    input.disabled = lockReason !== '';
+    chip.title = lockReason || chip.dataset.baseTitle;
   });
 }
 
-/** Applies the combination rules after a checkbox was toggled. */
-function onGrindOptionToggled(optionName, isChecked) {
-  const options = state.grindOptions;
-  options[optionName] = isChecked;
-
-  const hasMainOption = options.basic || options.exotic || options.topside;
-  const onlyTopside = options.topside && !options.basic && !options.exotic;
-  if (!hasMainOption) {
-    options.switch = false;
-    options.negative = false;
-  }
-  if (onlyTopside) options.negative = false;
-  updateGrindOptionInputs();
-}
-
-grindOptionInputs.forEach((checkbox) => {
-  checkbox.addEventListener('change', () => onGrindOptionToggled(checkbox.dataset.option, checkbox.checked));
+optionInputs.forEach((input) => {
+  const { group, key } = getOptionGroupOfInput(input);
+  input.addEventListener('change', () => {
+    group.options[key] = input.checked;
+    enforceOptionRules();
+    renderOptionInputs();
+  });
 });
-updateGrindOptionInputs();
+renderOptionInputs();
 
 /* ---------------------------------------------------------------------
- * Grind list popup: hold a checked main checkbox (Basic, Exotic, Topside) for 1 second
- * to see the grinds that belong to it.
+ * Popups: hold a checked main Grind checkbox (Basic, Exotic, Topside) or a checked Before checkbox
+ * for 1 second to see the grinds / values that belong to it.
  * ------------------------------------------------------------------- */
 
 const LONG_PRESS_MS = 1000;
@@ -926,7 +1076,7 @@ const popupList = document.getElementById('popupList');
 const popupCloseButton = document.getElementById('popupClose');
 let pressStartedOnBackdrop = false;   // true when the current press began on the dark background
 
-/** Sort order in the popup: plain grinds, then negative, switch and switch + negative variants. */
+/** Sort order in the popup: regular grinds, then negative, switch and switch + negative variants. */
 const getVariantRank = (grind) => (grind.isSwitch ? 2 : 0) + (grind.isNegative ? 1 : 0);
 
 /** Grinds of one main group, including the variants that Switch / Negative currently add. */
@@ -938,7 +1088,7 @@ function getGrindsOfGroup(groupName) {
     switch: state.grindOptions.switch,
     negative: state.grindOptions.negative,
   };
-  return getAvailableGrinds(groupOptions)
+  return getAvailableGrinds({ ...getSettings(), grind: groupOptions })
     .map((grind, index) => ({ grind, index }))
     .sort((a, b) => getVariantRank(a.grind) - getVariantRank(b.grind) || a.index - b.index)
     .map((entry) => entry.grind);
@@ -953,19 +1103,19 @@ function layoutPopupColumns() {
   popupList.style.columnCount = Math.min(maxColumns, neededColumns);
 }
 
-function openGrindPopup(groupName) {
-  const grinds = getGrindsOfGroup(groupName);
-  const variantNames = [];
-  if (grinds.some((grind) => grind.isSwitch)) variantNames.push('switch');
-  if (grinds.some((grind) => grind.isNegative)) variantNames.push('negative');
-
-  popupTitle.textContent = `${MAIN_GROUP_LABELS[groupName]} grinds`;
-  popupInfo.textContent = `${grinds.length} grinds` +
-    (variantNames.length ? ` · plain + ${variantNames.join(' / ')} variants` : ' · plain grinds');
+/** Fills and opens the popup. `items` are { text, note? } entries. */
+function showPopup(title, info, items) {
+  popupTitle.textContent = title;
+  popupInfo.textContent = info;
   popupList.innerHTML = '';
-  grinds.forEach((grind) => {
+  items.forEach((entry) => {
     const item = document.createElement('li');
-    item.textContent = grind.name;
+    item.textContent = entry.text;
+    if (entry.note) {
+      const note = document.createElement('small');
+      note.textContent = entry.note;
+      item.appendChild(note);
+    }
     popupList.appendChild(item);
   });
 
@@ -974,6 +1124,48 @@ function openGrindPopup(groupName) {
   layoutPopupColumns();
   popupCloseButton.focus();
   try { if (navigator.vibrate) navigator.vibrate(25); } catch (error) { /* vibration is optional */ }
+}
+
+/** Popup of a main Grind checkbox (Basic, Exotic, Topside): its grinds. */
+function openGrindPopup(groupName) {
+  const grinds = getGrindsOfGroup(groupName);
+  const variantNames = [];
+  if (grinds.some((grind) => grind.isSwitch)) variantNames.push('switch');
+  if (grinds.some((grind) => grind.isNegative)) variantNames.push('negative');
+
+  showPopup(
+    `${MAIN_GROUP_LABELS[groupName]} grinds`,
+    `${grinds.length} grinds` + (variantNames.length ? ` · regular + ${variantNames.join(' / ')} variants` : ' · regular grinds'),
+    grinds.map((grind) => ({ text: grind.name })));
+}
+
+/** Notes shown next to a value in a popup: the conditions under which the value is used. */
+function describeValueConditions(value) {
+  const notes = [];
+  if (value.needsBackside === true) notes.push('grinds with Backside');
+  if (value.needsBackside === false) notes.push('grinds without Backside');
+  if (value.soulStall === 'front') notes.push('Soul grinds: after a face front stall');
+  if (value.soulStall === 'back') notes.push('Soul grinds: after a face back stall');
+  return notes.join(' · ');
+}
+
+/**
+ * Popup of a Before or After checkbox: the values it adds and the grinds they can be used with.
+ * @param positionLabel 'Before' or 'After'
+ * @param valueGroups   BEFORE_VALUE_GROUPS or AFTER_VALUE_GROUPS
+ * @param key           key of the checkbox, for example 'spin270'
+ */
+function openValuePopup(positionLabel, valueGroups, key) {
+  const valueGroup = valueGroups.find((group) => group.key === key);
+  const grindGroups = new Set();
+  valueGroup.values.forEach((value) => (value.grindGroups || ['soul', 'groove']).forEach((group) => grindGroups.add(group)));
+  const scope = grindGroups.size === 2 ? 'Soul and Groove grinds'
+    : (grindGroups.has('soul') ? 'Soul grinds only' : 'Groove grinds only');
+
+  showPopup(
+    `${positionLabel}: ${valueGroup.label}`,
+    `${valueGroup.values.length} values · ${scope}`,
+    valueGroup.values.map((value) => ({ text: formatValues([value.text])[0], note: describeValueConditions(value) })));
 }
 
 function closeGrindPopup() {
@@ -997,20 +1189,19 @@ window.addEventListener('resize', () => { if (!grindPopup.hidden) layoutPopupCol
 const SUPPORTS_TOUCH_EVENTS = 'ontouchstart' in window;
 
 /**
- * Ways to open the popup for a checked main checkbox (the checkbox state never changes):
+ * Makes a checkbox chip open a popup (the checkbox state never changes):
  *  - touch screen: hold for 1 second;
- *  - mouse: double-click, right-click, or hold the button for 1 second.
- * The events are attached to the whole chip, so a press anywhere on it counts.
+ *  - mouse: right-click, or hold the button for 1 second.
+ * The popup only opens while the checkbox is checked. The events are attached to the whole chip,
+ * so a press anywhere on it counts.
  */
-document.querySelectorAll('.chip.main').forEach((chip) => {
+function setupPopupTrigger(chip, openPopup) {
   const input = chip.querySelector('input');
-  const groupName = input.dataset.option;
   let timerId = null;
   let startX = 0;
   let startY = 0;
   let longPressFired = false;
   let lastPointerType = 'mouse';
-  let optionsBeforeClick = null;   // state before the first click of a possible double-click
 
   const cancelHold = () => {
     clearTimeout(timerId);
@@ -1030,7 +1221,7 @@ document.querySelectorAll('.chip.main').forEach((chip) => {
       timerId = null;
       longPressFired = true;
       chip.classList.remove('holding');
-      openGrindPopup(groupName);
+      openPopup();
     }, LONG_PRESS_MS);
   };
 
@@ -1072,29 +1263,31 @@ document.querySelectorAll('.chip.main').forEach((chip) => {
     }
   });
 
-  // Double-click: the two clicks toggle the checkbox twice, so the state from before the first click
-  // is restored (this also keeps Switch and Negative) and the popup opens.
-  chip.addEventListener('mousedown', (event) => {
-    if (event.detail === 1) optionsBeforeClick = { options: { ...state.grindOptions }, wasChecked: input.checked };
-  });
-  chip.addEventListener('dblclick', () => {
-    if (!optionsBeforeClick || !optionsBeforeClick.wasChecked) return;
-    Object.assign(state.grindOptions, optionsBeforeClick.options);
-    updateGrindOptionInputs();
-    openGrindPopup(groupName);
-  });
-
   // Right-click with a mouse opens the popup instead of the browser menu.
   chip.addEventListener('contextmenu', (event) => {
     if (lastPointerType === 'mouse' && input.checked) {
       event.preventDefault();
-      openGrindPopup(groupName);
+      openPopup();
     } else if (timerId || longPressFired || lastPointerType === 'touch') {
       event.preventDefault();        // touch long press: no browser menu
     }
   });
   chip.addEventListener('selectstart', (event) => event.preventDefault());
   chip.addEventListener('dragstart', (event) => event.preventDefault());
+}
+
+// Main Grind checkboxes list their grinds, Before and After checkboxes list their values.
+document.querySelectorAll('.chip.main').forEach((chip) => {
+  const groupName = chip.querySelector('input').dataset.option;
+  setupPopupTrigger(chip, () => openGrindPopup(groupName));
+});
+document.querySelectorAll('#opts input[data-before]').forEach((input) => {
+  const key = input.dataset.before;
+  setupPopupTrigger(input.closest('.chip'), () => openValuePopup('Before', BEFORE_VALUE_GROUPS, key));
+});
+document.querySelectorAll('#opts input[data-after]').forEach((input) => {
+  const key = input.dataset.after;
+  setupPopupTrigger(input.closest('.chip'), () => openValuePopup('After', AFTER_VALUE_GROUPS, key));
 });
 
 rollButton.addEventListener('click', rollDice);
