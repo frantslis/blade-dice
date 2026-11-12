@@ -97,3 +97,170 @@ nav{display:flex;width:100%;gap:8px;padding:10px 14px 0}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#222428;--bg1:#34373c;--bg2:#17181b;--ink:#e8e9eb;--face-hit:#efefef;--face-hit-ink:#121314;--face-off:#b4b7bd;--face-off-ink:#34373c;--tab-bg:rgba(255,255,255,.1);--tab-on:#e8e9eb;--tab-on-ink:#17181b;--btn:#e8e9eb;--btn-ink:#17181b;--btn-edge:#7b7e84}}
 :root[data-theme="dark"]{--bg:#222428;--bg1:#34373c;--bg2:#17181b;--ink:#e8e9eb;--face-hit:#efefef;--face-hit-ink:#121314;--face-off:#b4b7bd;--face-off-ink:#34373c;--tab-bg:rgba(255,255,255,.1);--tab-on:#e8e9eb;--tab-on-ink:#17181b;--btn:#e8e9eb;--btn-ink:#17181b;--btn-edge:#7b7e84}
 .ui{display:flex;flex-direction:column;align-items:center}
+
+/* ---- window chrome and style toggle (only visible in the 1998 style, the toggle is always visible) ---- */
+#titlebar,#statusbar,.era-extra{display:none}
+.era-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;margin:-8px 0 16px}
+.era-group{display:flex;align-items:center;gap:8px;min-width:0}
+.era-bar .seg button{padding:7px 13px;font-size:13px}
+.manifest-link{flex:none;border:0;border-radius:999px;background:var(--tab-bg);color:var(--ink);padding:8px 15px;font:700 13px system-ui,sans-serif;letter-spacing:.04em;cursor:pointer}
+.manifest-link:active{transform:scale(.96)}
+.manifest-link:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* manifest page */
+#manifest{flex:1;min-height:0;width:100%;display:flex;flex-direction:column}
+.manifest-body{flex:1;min-height:0;overflow-y:auto;display:flex;padding:20px}
+.manifest-card{position:relative;margin:auto;width:100%;max-width:460px;padding:32px 24px 28px;border-radius:20px;background:var(--btn);color:var(--btn-ink);box-shadow:0 10px 30px rgba(0,0,0,.3);overflow:hidden}
+.manifest-card::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(#0057b7 50%,#ffd700 50%)}
+.manifest-card p{margin:0;font-size:18px;line-height:1.65}
+.manifest-contact{flex:none;margin:0;padding:6px 16px 18px;text-align:center;font-size:12px;line-height:1.4;opacity:.85}
+.manifest-contact a{color:inherit;text-decoration:underline}
+.era-label{font-size:12px;font-weight:700;letter-spacing:.05em;opacity:.9;white-space:nowrap}
+
+/* ---- quote at the bottom of the mode page ---- */
+.quote{width:100%;max-width:420px;margin:22px auto 6px;padding:0 6px;text-align:center;font-style:italic;text-wrap:balance}
+.quote blockquote{display:inline;margin:0}
+.quote p{display:inline;margin:0;font-size:15px;line-height:1.5;opacity:.92}
+.quote figcaption{display:inline;margin:0;font-size:13px;letter-spacing:.06em;opacity:.75}
+.quote figcaption::before{content:"\00a0\2014\00a0"}   /* no-break spaces: "maddening.” — MB9" always stays on one line */
+
+/* ---- copy button in the corner of the result area ---- */
+.copy-btn{position:absolute;top:6px;right:6px;z-index:6;display:flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border:0;border-radius:11px;background:var(--tab-bg);color:var(--ink);cursor:pointer}
+.copy-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.copy-btn .icon-done{display:none}
+.copy-btn.copied .icon-copy{display:none}
+.copy-btn.copied .icon-done{display:block}
+.copy-btn:active{transform:scale(.92)}
+.copy-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.copy-toast{position:absolute;top:13px;right:50px;z-index:6;padding:4px 9px;border-radius:9px;background:var(--btn);color:var(--btn-ink);font-size:12px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s}
+.copy-toast.show{opacity:1}
+
+/* ===================================================================
+   1998 style: Windows 98 look. Everything below only applies to <html data-era="1998">.
+   =================================================================== */
+:root[data-era="1998"]{color-scheme:light;--font98:"MS Sans Serif","Microsoft Sans Serif",Tahoma,Verdana,Arial,sans-serif;--bg:#008080;--bg1:#008080;--bg2:#008080;--ink:#000;--face-hit:#000080;--face-hit-ink:#fff;--face-off:#c0c0c0;--face-off-ink:#000;--tab-bg:#c0c0c0;--tab-on:#c0c0c0;--tab-on-ink:#000;--btn:#c0c0c0;--btn-ink:#000;--btn-edge:#808080}
+html[data-era="1998"]{background:#008080}
+/* the whole app is one window on the teal desktop */
+html[data-era="1998"] body{font:12px/1.3 var(--font98);-webkit-font-smoothing:none;color:#000;background:#c0c0c0;margin:6px;width:calc(100% - 12px);height:calc(100% - 12px);padding:3px;border:2px solid;border-color:#dfdfdf #404040 #404040 #dfdfdf;box-shadow:inset 1px 1px #fff,inset -1px -1px #808080,3px 3px 0 rgba(0,0,0,.45)}
+html[data-era="1998"] #titlebar{display:flex;align-items:center;gap:3px;flex:none;width:100%;height:22px;padding:2px 3px;margin-bottom:3px;background:linear-gradient(90deg,#000080,#1084d0);color:#fff;font-weight:700}
+html[data-era="1998"] .titlebar-icon{font-size:13px;line-height:1}
+html[data-era="1998"] .titlebar-text{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+html[data-era="1998"] .titlebar-btn{flex:none;width:18px;height:16px;padding:0;font-size:11px;line-height:1;font-weight:700}
+html[data-era="1998"] .titlebar-btn:last-child{margin-left:2px}
+html[data-era="1998"] #statusbar{display:flex;gap:2px;flex:none;width:100%;padding-top:3px;font-size:11px}
+html[data-era="1998"] #statusbar span{padding:2px 6px;border:1px solid;border-color:#808080 #fff #fff #808080;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-era="1998"] #statusMessage{flex:1;min-width:0}
+html[data-era="1998"] #statusMode{flex:none;max-width:60%}
+
+/* raised buttons */
+html[data-era="1998"] .tab,html[data-era="1998"] .seg button,html[data-era="1998"] #btn,html[data-era="1998"] .mode,html[data-era="1998"] .popup-close,html[data-era="1998"] .titlebar-btn{font-family:var(--font98);letter-spacing:0;text-transform:none;border:2px solid;border-color:#fff #404040 #404040 #fff;border-radius:0;background:#c0c0c0;color:#000;box-shadow:inset -1px -1px #808080,inset 1px 1px #dfdfdf}
+/* pressed / selected buttons */
+html[data-era="1998"] .tab.on,html[data-era="1998"] .seg button.on,html[data-era="1998"] #btn:active:not(:disabled),html[data-era="1998"] .mode:active:not(:disabled),html[data-era="1998"] .popup-close:active,html[data-era="1998"] .titlebar-btn:active{border-color:#404040 #fff #fff #404040;box-shadow:inset 1px 1px #808080,inset -1px -1px #dfdfdf}
+html[data-era="1998"] .popup-close:focus-visible{outline:1px dotted #fff;outline-offset:-4px}
+html[data-era="1998"] .tab:focus-visible,html[data-era="1998"] .seg button:focus-visible,html[data-era="1998"] #btn:focus-visible,html[data-era="1998"] .mode:focus-visible{outline:1px dotted #000;outline-offset:-5px}
+
+/* tabs */
+html[data-era="1998"] nav{gap:2px;padding:4px 2px 0}
+html[data-era="1998"] .tab{font-size:12px;font-weight:400;padding:4px 0;color:#000}
+html[data-era="1998"] .tab.on{font-weight:700;background:#c0c0c0;color:#000}
+
+/* mode page */
+html[data-era="1998"] #mode{padding:10px 8px}
+html[data-era="1998"] .era-bar{margin:0 0 14px}
+html[data-era="1998"] .era-label{font:12px var(--font98);opacity:1;letter-spacing:0}
+html[data-era="1998"] .era-bar .seg button{padding:3px 12px;font-size:12px;min-width:0}
+html[data-era="1998"] .manifest-link{padding:3px 12px;border:2px solid;border-color:#fff #404040 #404040 #fff;border-radius:0;background:#c0c0c0;color:#000;font:12px var(--font98);letter-spacing:0;box-shadow:inset -1px -1px #808080,inset 1px 1px #dfdfdf}
+html[data-era="1998"] .manifest-link:active{transform:none;border-color:#404040 #fff #fff #404040;box-shadow:inset 1px 1px #808080,inset -1px -1px #dfdfdf}
+html[data-era="1998"] .manifest-link:focus-visible{outline:1px dotted #000;outline-offset:-5px}
+html[data-era="1998"] .manifest-body{padding:6px}
+html[data-era="1998"] .manifest-card{margin:6px auto;padding:24px 18px 20px;border-radius:0;background:#fff;color:#000;border:2px solid;border-color:#808080 #fff #fff #808080;box-shadow:inset 1px 1px #404040;font:17px/1.6 "Times New Roman",Times,serif}
+html[data-era="1998"] .manifest-card::before{height:8px}
+html[data-era="1998"] .manifest-card p{font-size:17px}
+html[data-era="1998"] .manifest-contact{padding:6px 8px 4px;font:11px var(--font98);opacity:1;color:#000}
+html[data-era="1998"] .manifest-contact a{color:#0000ee}
+html[data-era="1998"] .seg{background:none;padding:0;gap:2px}
+html[data-era="1998"] .seg button{font-size:12px;font-weight:400;padding:3px 16px;min-width:56px}
+html[data-era="1998"] .seg button.on{font-weight:700}
+html[data-era="1998"] .mtitle{font:italic 900 clamp(30px,9.5vw,46px)/1.05 Impact,"Arial Black","Arial Narrow",sans-serif;letter-spacing:0;color:#000080;text-shadow:2px 2px 0 #fff,4px 4px 0 #808080;margin-bottom:22px}
+html[data-era="1998"] .mb{font-size:1.2em;letter-spacing:1px}
+html[data-era="1998"] .mir{text-shadow:-2px 2px 0 #fff,-4px 4px 0 #808080}
+html[data-era="1998"] .modes{gap:8px}
+html[data-era="1998"] .mode{padding:8px 10px;gap:8px;text-align:left}
+html[data-era="1998"] .mode b{font-size:14px;font-weight:700}
+html[data-era="1998"] .mode small{font-size:11px;opacity:1;color:#000;margin-top:1px}
+html[data-era="1998"] .mode i{border-radius:0;background:#000080;color:#fff;font:700 11px var(--font98);letter-spacing:0;text-transform:none;padding:2px 7px}
+html[data-era="1998"] .mode:disabled{color:#808080;text-shadow:1px 1px 0 #fff}
+html[data-era="1998"] .mode:disabled small{color:#808080;opacity:1}
+html[data-era="1998"] .mode:disabled i{background:#808080;color:#dfdfdf}
+html[data-era="1998"] .era-extra{display:block;margin-top:18px;text-align:center;color:#000}
+html[data-era="1998"] .era-extra p{margin:6px 0}
+html[data-era="1998"] .counter{display:inline-block;padding:1px 6px;background:#000;color:#33ff33;font:18px/1 "VT323","Courier New",monospace;letter-spacing:3px;border:2px solid;border-color:#808080 #fff #fff #808080;vertical-align:middle}
+html[data-era="1998"] .era-note{font-size:10px;color:#404040}
+
+/* game page: group boxes with checkboxes */
+html[data-era="1998"] #opts{align-items:stretch;gap:0;padding:2px 6px 0}
+html[data-era="1998"] .orow{position:relative;justify-content:flex-start;gap:0 12px;margin-top:9px;padding:9px 8px 4px;border:1px solid #808080;box-shadow:1px 1px 0 #fff,inset 1px 1px 0 #fff}
+html[data-era="1998"] .optl{position:absolute;top:-8px;left:8px;min-width:0;padding:0 4px;background:#c0c0c0;color:#000;font-size:11px;font-weight:400;letter-spacing:0;opacity:1}
+html[data-era="1998"] .chip span{display:inline-block;padding:3px 2px 3px 20px;border-radius:0;background:none;color:#000;font:12px/1.3 var(--font98);letter-spacing:0}
+html[data-era="1998"] .chip.main span{padding:4px 3px 4px 22px;font-weight:700}
+html[data-era="1998"] .chip span::before{content:"";position:absolute;left:2px;top:50%;width:13px;height:13px;margin-top:-7px;background:#fff;border:2px solid;border-color:#808080 #fff #fff #808080;box-shadow:inset 1px 1px #404040,inset -1px -1px #dfdfdf}
+html[data-era="1998"] .chip.main span::before{width:15px;height:15px;margin-top:-8px}
+html[data-era="1998"] .chip input:checked+span{background:none;color:#000}
+html[data-era="1998"] .chip input:checked+span::before{content:"";background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Cpath d='M1 4.5L3.5 7 8 1.5' stroke='%23000' stroke-width='1.8' fill='none'/%3E%3C/svg%3E") center/9px 9px no-repeat}
+html[data-era="1998"] .chip input:disabled+span{opacity:1;color:#808080;text-shadow:1px 1px 0 #fff}
+html[data-era="1998"] .chip input:disabled+span::before{background-color:#c0c0c0}
+html[data-era="1998"] .chip input:focus-visible+span{outline:1px dotted #000;outline-offset:0}
+html[data-era="1998"] .chip span::after{height:2px;background:#000080;opacity:1}
+
+/* result display, dice table (Solitaire green) and roll button */
+html[data-era="1998"] #out{margin:4px;padding:2px 14px;font-family:"VT323","Lucida Console","Courier New",monospace;font-weight:400;line-height:1.05;color:#33ff33;background:#000;border:2px solid;border-color:#808080 #fff #fff #808080;box-shadow:inset 1px 1px #404040;text-shadow:0 0 6px rgba(51,255,51,.6);opacity:1}
+html[data-era="1998"] #out:empty{display:none}
+html[data-era="1998"] main{width:calc(100% - 8px);margin:0 4px;background:#008000 radial-gradient(rgba(255,255,255,.1) 1px,transparent 1px) 0 0/4px 4px;border:2px solid;border-color:#808080 #fff #fff #808080;box-shadow:inset 1px 1px #404040}
+html[data-era="1998"] .ui{padding:6px 0 2px}
+html[data-era="1998"] #btn{font-size:clamp(12px,calc(var(--s)*.17),20px);font-weight:700;line-height:1;padding:.55em 1.8em;margin-bottom:calc(var(--s)*.08);transition:none}
+html[data-era="1998"] #btn:active:not(:disabled){transform:none;padding:.65em 1.75em .45em 1.85em}
+html[data-era="1998"] #btn:disabled{opacity:1;color:#808080;text-shadow:1px 1px 0 #fff}
+
+/* the dice: bevelled grey blocks, the rolled side is selected (navy) */
+html[data-era="1998"] .face{border-radius:0;box-shadow:inset 1px 1px #fff,inset -1px -1px #404040,inset 2px 2px #dfdfdf,inset -2px -2px #808080}
+html[data-era="1998"] .face.hit{box-shadow:inset 1px 1px #1084d0,inset -1px -1px #000}
+html[data-era="1998"] .core{background:#808080;filter:none}
+html[data-era="1998"] .word{font-family:var(--font98);font-weight:700}
+html[data-era="1998"] .shadow{background:radial-gradient(rgba(0,0,0,.5),rgba(0,0,0,0) 70%)}
+
+/* rules page: a white document with a sunken frame */
+html[data-era="1998"] .lang{padding:6px 0 2px}
+html[data-era="1998"] .rbody{margin:4px;padding:10px 14px 20px;background:#fff;color:#000;border:2px solid;border-color:#808080 #fff #fff #808080;box-shadow:inset 1px 1px #404040;font:13px/1.45 Arial,Helvetica,sans-serif}
+html[data-era="1998"] #rules{font-size:13px;line-height:1.45}
+html[data-era="1998"] #rules h2{margin:18px 0 8px;padding-bottom:2px;color:#000080;font:700 15px/1.3 Arial,Helvetica,sans-serif;border-bottom:2px solid #000080}
+html[data-era="1998"] #rules h2:first-child{margin-top:0}
+html[data-era="1998"] #rules li{margin:4px 0}
+
+/* popup: a modal dialog window over a dithered screen */
+html[data-era="1998"] .popup{background:repeating-conic-gradient(rgba(0,0,0,.4) 0 25%,rgba(0,0,0,0) 0 50%) 0 0/2px 2px}
+html[data-era="1998"] .popup-card{padding:2px;border-radius:0;background:#c0c0c0;color:#000;border:2px solid;border-color:#fff #404040 #404040 #fff;box-shadow:inset -1px -1px #808080,inset 1px 1px #dfdfdf,4px 4px 0 rgba(0,0,0,.5)}
+html[data-era="1998"] .popup-head{align-items:center;gap:8px;padding:3px 4px 3px 6px;background:linear-gradient(90deg,#000080,#1084d0);color:#fff}
+html[data-era="1998"] .popup-head>div{min-width:0}
+html[data-era="1998"] .popup-head h2{margin:0;color:#fff;font:700 12px/1.2 var(--font98)}
+html[data-era="1998"] .popup-head p{margin:0;color:#dfe9ff;font-size:11px;opacity:1}
+html[data-era="1998"] .popup-close{width:18px;height:16px;padding:0;font-size:13px;font-weight:700;line-height:1}
+html[data-era="1998"] #popupList{margin:6px;padding:6px 10px;background:#fff;color:#000;border:2px solid;border-color:#808080 #fff #fff #808080;box-shadow:inset 1px 1px #404040;font:12px/1.3 var(--font98)}
+html[data-era="1998"] #popupList li small{color:#555;opacity:1}
+
+/* quote: a group box with a legend, in a classic serif */
+html[data-era="1998"] .quote{position:relative;margin:26px auto 10px;padding:14px 12px 10px;border:1px solid #808080;box-shadow:1px 1px 0 #fff,inset 1px 1px 0 #fff;color:#000}
+html[data-era="1998"] .quote::before{content:"Quote of the day";position:absolute;top:-8px;left:10px;padding:0 4px;background:#c0c0c0;font:normal 11px var(--font98)}
+html[data-era="1998"] .quote p{font:italic 14px/1.45 "Times New Roman",Times,serif;opacity:1}
+html[data-era="1998"] .quote figcaption{font:italic 12px "Times New Roman",Times,serif;letter-spacing:0;opacity:1;color:#000080}
+
+/* copy button: a small raised button with a yellow tooltip */
+html[data-era="1998"] .copy-btn{top:6px;right:6px;width:26px;height:24px;border:2px solid;border-color:#fff #404040 #404040 #fff;border-radius:0;background:#c0c0c0;color:#000;box-shadow:inset -1px -1px #808080,inset 1px 1px #dfdfdf}
+html[data-era="1998"] .copy-btn svg{width:14px;height:14px;stroke-width:2.4}
+html[data-era="1998"] .copy-btn:active{transform:none;border-color:#404040 #fff #fff #404040;box-shadow:inset 1px 1px #808080,inset -1px -1px #dfdfdf}
+html[data-era="1998"] .copy-btn:focus-visible{outline:1px dotted #000;outline-offset:-4px}
+html[data-era="1998"] .copy-toast{top:9px;right:40px;padding:1px 5px;border:1px solid #000;border-radius:0;background:#ffffe1;color:#000;font:11px var(--font98);transition:none}
+
+/* Windows 98 scrollbars (WebKit / Blink) */
+html[data-era="1998"] ::-webkit-scrollbar{width:16px;height:16px}
+html[data-era="1998"] ::-webkit-scrollbar-track{background:conic-gradient(#fff 25%,#c0c0c0 0 50%,#fff 0 75%,#c0c0c0 0) 0 0/2px 2px}
+html[data-era="1998"] ::-webkit-scrollbar-thumb{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;box-shadow:inset -1px -1px #808080,inset 1px 1px #dfdfdf}
+html[data-era="1998"] ::-webkit-scrollbar-button{display:block;height:16px;width:16px;background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;box-shadow:inset -1px -1px #808080,inset 1px 1px #dfdfdf}

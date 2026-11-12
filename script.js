@@ -395,6 +395,11 @@ const optionsPanel = document.getElementById('opts');
 const rulesView = document.getElementById('rules');
 const navigation = document.querySelector('nav');
 const tabButtons = document.querySelectorAll('.tab');
+const titleBarText = document.getElementById('titlebarText');     // title bar of the 1998 style
+const statusMessage = document.getElementById('statusMessage');   // status bar of the 1998 style
+const statusMode = document.getElementById('statusMode');
+const copyButton = document.getElementById('copyButton');   // copies the final combination
+const copyToast = document.getElementById('copyToast');
 
 const GAME_MODES = {
   classic: { type: 'classic', diceCount: 2, hasGrindOptions: false },
@@ -403,6 +408,9 @@ const GAME_MODES = {
 
 const state = {
   mode: null,            // current entry of GAME_MODES
+  modeKey: 'classic',    // key of the current mode
+  copyText: '',          // text of the final combination, copied by the copy button
+  viewName: 'mode',      // visible page: 'mode', 'game', 'rules' or 'manifest'
   dice: [],              // dice objects (see createDie)
   isRolling: false,
   generation: 0,         // increases on every mode start, used to ignore stale timers
@@ -569,12 +577,13 @@ function startGameMode(modeKey) {
   state.isRolling = false;
   rollButton.disabled = false;
   state.mode = mode;
+  state.modeKey = modeKey;
   state.combination = null;
 
   rulesView.dataset.mode = modeKey;
   optionsPanel.hidden = !mode.hasGrindOptions;
   gameView.dataset.n = mode.diceCount;
-  resultText.textContent = '';
+  clearResult();
   stageElement.innerHTML = '';
   state.dice = [];
 
@@ -644,7 +653,8 @@ function rollDice() {
   if (state.isRolling) return;
   state.isRolling = true;
   rollButton.disabled = true;
-  resultText.textContent = '';
+  clearResult();
+  setStatusMessage('Rolling...');
   hideEffects();
   state.dice.forEach(resetDieInteraction);
 
@@ -674,6 +684,7 @@ function rollDice() {
     try { if (navigator.vibrate) navigator.vibrate(30); } catch (error) { /* vibration is optional */ }
     state.isRolling = false;
     rollButton.disabled = false;
+    setStatusMessage('Ready');
   }, totalMs);
 }
 
@@ -919,9 +930,75 @@ function playEffectsForGrind(grind) {
 
 /** Shows the result lines (one per die) and fits the text into the free space. */
 function showResult(lines) {
-  resultText.textContent = lines.map((line) => splitIntoLines(line).join(' ')).join('\n');
+  const lineTexts = lines.map((line) => splitIntoLines(line).join(' '));
+  resultText.textContent = lineTexts.join('\n');
+  state.copyText = lineTexts.join(COMBINATION_SEPARATOR);
+  updateCopyButton();
   fitResultText();
 }
+
+/** Empties the result area (and hides the copy button) until the next roll has landed. */
+function clearResult() {
+  resultText.textContent = '';
+  state.copyText = '';
+  updateCopyButton();
+}
+
+/* ---------------------------------------------------------------------
+ * Copy button: copies the final combination, for example "Zero spin + Backside Unity + Backward"
+ * ------------------------------------------------------------------- */
+
+const COMBINATION_SEPARATOR = ' + ';
+const COPY_FEEDBACK_MS = 1400;
+let copyFeedbackTimer = null;
+
+/** The copy button is only visible while a final combination is shown. */
+function updateCopyButton() {
+  copyButton.hidden = resultText.textContent === '';
+}
+
+/**
+ * Copies text to the clipboard. Uses the Clipboard API and falls back to a hidden text field
+ * for browsers or embedded views where the API is not available.
+ * @returns {Promise<boolean>} true when the text was copied
+ */
+async function copyTextToClipboard(text) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (error) { /* try the fallback below */ }
+
+  const helperField = document.createElement('textarea');
+  helperField.value = text;
+  helperField.setAttribute('readonly', '');
+  helperField.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+  document.body.appendChild(helperField);
+  helperField.select();
+  helperField.setSelectionRange(0, text.length);
+  let isCopied = false;
+  try { isCopied = document.execCommand('copy'); } catch (error) { isCopied = false; }
+  helperField.remove();
+  return isCopied;
+}
+
+/** Shows "Copied" (and a check mark on the button) or "Copy failed" for a moment. */
+function showCopyFeedback(isCopied) {
+  copyToast.textContent = isCopied ? 'Copied' : 'Copy failed';
+  copyToast.classList.add('show');
+  copyButton.classList.toggle('copied', isCopied);
+  clearTimeout(copyFeedbackTimer);
+  copyFeedbackTimer = setTimeout(() => {
+    copyToast.classList.remove('show');
+    copyButton.classList.remove('copied');
+  }, COPY_FEEDBACK_MS);
+}
+
+copyButton.addEventListener('click', async () => {
+  if (state.copyText === '') return;
+  showCopyFeedback(await copyTextToClipboard(state.copyText));
+});
 
 /** Shrinks the result font until the text fits the box. */
 function fitResultText() {
@@ -934,15 +1011,18 @@ function fitResultText() {
 }
 window.addEventListener('resize', fitResultText);
 
-/** Shows one of the views: "mode", "game" or "rules". The menu is hidden on the mode page. */
+/** Shows one of the views: "mode", "game", "rules" or "manifest". The main menu is hidden on the mode and manifest pages. */
 function showView(viewName) {
-  navigation.hidden = viewName === 'mode';
+  state.viewName = viewName;
+  updateWindowChrome();
+  navigation.hidden = viewName === 'mode' || viewName === 'manifest';
   tabButtons.forEach((tab) => tab.classList.toggle('on', tab.dataset.v === viewName));
-  ['mode', 'game', 'rules'].forEach((id) => { document.getElementById(id).hidden = id !== viewName; });
+  ['mode', 'game', 'rules', 'manifest'].forEach((id) => { document.getElementById(id).hidden = id !== viewName; });
   if (viewName === 'game') fitResultText();
 }
 
 tabButtons.forEach((tab) => tab.addEventListener('click', () => showView(tab.dataset.v)));
+document.querySelector('.manifest-link').addEventListener('click', () => showView('manifest'));   // top right of the mode page
 
 document.querySelectorAll('.mode[data-mode]').forEach((card) => {
   card.addEventListener('click', () => {
@@ -1293,7 +1373,7 @@ document.querySelectorAll('#opts input[data-after]').forEach((input) => {
 rollButton.addEventListener('click', rollDice);
 
 /* Rules language switch (UA / ENG), remembered between visits */
-const languageButtons = document.querySelectorAll('.seg button');
+const languageButtons = document.querySelectorAll('.seg button[data-l]');   // UA / ENG only, not the style toggle
 
 function setRulesLanguage(language) {
   languageButtons.forEach((button) => button.classList.toggle('on', button.dataset.l === language));
@@ -1308,6 +1388,67 @@ languageButtons.forEach((button) => button.addEventListener('click', () => setRu
 let savedLanguage = 'ua';
 try { savedLanguage = localStorage.getItem('blade-lang') || 'ua'; } catch (error) { /* storage is optional */ }
 setRulesLanguage(savedLanguage === 'en' ? 'en' : 'ua');
+
+/* ---------------------------------------------------------------------
+ * 10. Visual style (2026 or 1998) and window chrome
+ * ------------------------------------------------------------------- */
+
+const ERA_STORAGE_KEY = 'blade-era';
+const VISIT_STORAGE_KEY = 'blade-visits';
+const VISITOR_COUNTER_START = 5050;   // number the visitor counter shows on the first visit
+const ERA_1998_THEME_COLOR = '#008080';
+const APP_TITLE = 'B.L.A.D.E. Dice';
+const VIEW_TITLES = { mode: 'Choose your mode', game: 'Game', rules: 'Rules', manifest: 'Manifest' };
+const MODE_LABELS = { classic: 'Classic', custom: 'Custom' };
+
+const eraButtons = document.querySelectorAll('.era-toggle button');
+const themeColorMetas = document.querySelectorAll('meta[name="theme-color"]');
+
+/** Title bar and status bar text (only visible in the 1998 style). */
+function updateWindowChrome() {
+  titleBarText.textContent = `${APP_TITLE} - ${VIEW_TITLES[state.viewName]}`;
+  if (state.viewName === 'mode') statusMode.textContent = 'Choose a mode';
+  else if (state.viewName === 'manifest') statusMode.textContent = 'Manifest';
+  else statusMode.textContent = `${MODE_LABELS[state.modeKey]} · ${state.mode.diceCount} dice`;
+}
+
+function setStatusMessage(text) {
+  statusMessage.textContent = text;
+}
+
+/** Switches the whole site between the 2026 style and the 1998 (Windows 98) style and remembers it. */
+function setEra(era) {
+  document.documentElement.dataset.era = era;
+  eraButtons.forEach((button) => {
+    const isSelected = button.dataset.era === era;
+    button.classList.toggle('on', isSelected);
+    button.setAttribute('aria-pressed', String(isSelected));
+  });
+  themeColorMetas.forEach((meta) => {
+    if (meta.dataset.original === undefined) meta.dataset.original = meta.content;   // remember the 2026 color
+    meta.content = era === '1998' ? ERA_1998_THEME_COLOR : meta.dataset.original;
+  });
+  try { localStorage.setItem(ERA_STORAGE_KEY, era); } catch (error) { /* storage is optional */ }
+  fitResultText();
+}
+
+eraButtons.forEach((button) => button.addEventListener('click', () => setEra(button.dataset.era)));
+document.getElementById('titlebarClose').addEventListener('click', () => showView('mode'));
+
+/** Visitor counter of the 1998 mode page: counts the visits of this browser. */
+function showVisitorCounter() {
+  let visits = 0;
+  try {
+    visits = parseInt(localStorage.getItem(VISIT_STORAGE_KEY), 10) || 0;
+    localStorage.setItem(VISIT_STORAGE_KEY, String(visits + 1));
+  } catch (error) { /* storage is optional */ }
+  document.getElementById('visitorCounter').textContent = String(VISITOR_COUNTER_START + visits).padStart(6, '0');
+}
+
+let savedEra = '2026';
+try { savedEra = localStorage.getItem(ERA_STORAGE_KEY) || '2026'; } catch (error) { /* storage is optional */ }
+setEra(savedEra === '1998' ? '1998' : '2026');
+showVisitorCounter();
 
 /* Start with the Classic dice ready; the mode page is shown first. */
 startGameMode('classic');

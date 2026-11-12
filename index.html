@@ -6,25 +6,37 @@
 <meta name="theme-color" content="#6b6f76" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#222428" media="(prefers-color-scheme: dark)">
 <title>Combo Dice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div id="titlebar" class="titlebar"><span class="titlebar-icon" aria-hidden="true">&#127922;</span><span id="titlebarText" class="titlebar-text">B.L.A.D.E. Dice</span><button class="titlebar-btn" type="button" aria-label="Minimize" tabindex="-1">_</button><button class="titlebar-btn" type="button" aria-label="Maximize" tabindex="-1">&#9633;</button><button id="titlebarClose" class="titlebar-btn" type="button" aria-label="Back to the mode page">&times;</button></div>
 <nav hidden><button class="tab" data-v="mode">Mode</button><button class="tab" data-v="game">Game</button><button class="tab" data-v="rules">Rules</button></nav>
-<section id="mode"><div class="mwrap">
+<section id="mode">
+<div class="era-bar"><div class="era-group"><span class="era-label">Time machine</span><div class="seg era-toggle" role="group" aria-label="Time machine: site style"><button type="button" data-era="2026" class="on" aria-pressed="true">2026</button><button type="button" data-era="1998" aria-pressed="false">1998</button></div></div><button type="button" class="manifest-link">Manifest</button></div>
+<div class="mwrap">
 <h1 class="mtitle">Choose your<br><span class="mb">B.L.A.<span class="mir">D</span>.E.</span></h1>
 <div class="modes">
 <button class="mode" data-mode="classic"><span><b>Classic</b><small>Simple 2 real world alike dices.</small></span><i>Play</i></button>
 <button class="mode" data-mode="custom"><span><b>Custom</b><small>Flexible setup of in-grind-out options with slot-alike dices.</small></span><i>Play</i></button>
 <button class="mode" disabled><span><b>Switch-up</b><small>Extended custom mode with one switch-up.</small></span><i>Soon</i></button>
 <button class="mode" disabled><span><b>Goat mode</b><small>Extended switch-up mode.</small></span><i>Soon</i></button>
-</div></div></section>
+</div>
+<div class="era-extra"><p class="visitor">You are visitor No. <span id="visitorCounter" class="counter">005050</span></p><p class="era-note">Best viewed in Internet Explorer 4.0 at 800 x 600</p></div>
+</div>
+<figure class="quote"><blockquote><p>“We are in that pattern of repetition and delusion that sometimes is rewarding and sometimes it is maddening.”</p></blockquote><figcaption>MB9</figcaption></figure>
+</section>
 <div id="game" hidden>
 <div id="opts" hidden>
 <div class="orow"><span class="optl">Before</span><label class="chip" title="Forward, Zero spin. Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-before="basic"><span>Basic</span></label><label class="chip" title="Alleyoop, Truspin, Inspin 180, Outspin 180 (Soul grinds only). Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-before="spin180"><span>180</span></label><label class="chip" title="270, Truspin 270, Inspin 270, Outspin 270 (Groove grinds only). Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-before="spin270"><span>270</span></label><label class="chip" title="360 inspin, 360 outspin, Truspin 360, Alleyoop 360 (Soul grinds only). Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-before="spin360"><span>360</span></label><label class="chip" title="Darkside, Disaster. Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-before="darksideDisaster"><span>D&amp;D</span></label></div>
 <div class="orow"><span class="optl">Grind</span><label class="chip main" title="Hold 1 s or right-click when checked to list its grinds"><input type="checkbox" data-option="basic"><span>Basic</span></label><label class="chip main" title="Hold 1 s or right-click when checked to list its grinds"><input type="checkbox" data-option="exotic"><span>Exotic</span></label><label class="chip main" title="Hold 1 s or right-click when checked to list its grinds"><input type="checkbox" data-option="topside"><span>Topside</span></label><label class="chip"><input type="checkbox" data-option="switch" disabled><span>Switch</span></label><label class="chip"><input type="checkbox" data-option="negative" disabled><span>Negative</span></label></div>
 <div class="orow"><span class="optl">After</span><label class="chip" title="Forward, Backward. Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-after="basic"><span>Basic</span></label><label class="chip" title="180, 180 rewind (Soul grinds only). Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-after="spin180"><span>180</span></label><label class="chip" title="270, 270 rewind (Groove grinds only). Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-after="spin270"><span>270</span></label><label class="chip" title="360, 360 rewind (Soul grinds only). Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-after="spin360"><span>360</span></label><label class="chip" title="450, 450 rewind (Groove grinds only). Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-after="spin450"><span>450</span></label><label class="chip" title="540, 540 rewind (Soul grinds only). Hold 1 s or right-click when checked to list the values"><input type="checkbox" data-after="spin540"><span>540</span></label></div>
 </div>
-<div id="outBox"><div id="out"></div><img id="xg" class="xg" alt="" hidden src="xgrind.png"></div>
+<div id="outBox"><div id="out"></div>
+<button id="copyButton" class="copy-btn" type="button" hidden aria-label="Copy the combination" title="Copy the combination"><svg class="icon-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg><svg class="icon-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg></button>
+<span id="copyToast" class="copy-toast" aria-live="polite"></span><img id="xg" class="xg" alt="" hidden src="xgrind.png"></div>
 <main><div class="stage" id="stage"></div></main>
 <div class="ui"><button id="btn">b.l.a.d.e.</button></div>
 </div>
@@ -41,6 +53,7 @@
 <div class="r-custom">
 <h2>Режим Custom</h2>
 <p>Розширена версія класичного підходу з 2 кубиками з гнучким налаштуванням. У цьому режимі кожен кубик — це не реальний кубик лише з 6 можливими значеннями (по одному на кожну грань). Тут кожен кубик — це слот-генератор, який показує всі можливі комбінації для відповідної опції. Використовуйте меню чекбоксів для кожного кубика, щоб розширити базові комбінації спінів і грайндів відповідно до вашого вибору, настрою чи рівня.</p>
+<p>Натисніть і утримуйте активований чекбокс протягом 1 секунди, щоб побачити список значень, які охоплює цей чекбокс.</p>
 </div>
 <h2>🎲 Як грати в BLADE за допомогою кубиків:</h2>
 <p><b>Черговість:</b> Гравець кидає кубик.</p>
@@ -59,6 +72,7 @@
 <div class="r-custom">
 <h2>Custom mode</h2>
 <p>Extended version of classic 2 dice approach with flexible setup. In this mode each dice is not a real world representation of a dice with just 6 possible values (one for each side). Each dice here is slot-alike generator that shows you all possible combinations for that option. Use checkbox menu for each dice option to extend basic spins and grinds combinations up to your choice/mood/level.</p>
+<p>Tap and hold activated checkbox for 1 sec to see list of values covered by that checkbox.</p>
 </div>
 <h2>🎲 How to play BLADE with the dice:</h2>
 <p><b>Order:</b> Player roll a dice.</p>
@@ -69,6 +83,11 @@
 </div>
 </div></section>
 <img id="hd" class="hd" alt="" hidden src="hotdog.png">
+<section id="manifest" hidden>
+<nav class="manifest-nav"><button class="tab" type="button" data-v="mode">Mode</button><button class="tab on" type="button" data-v="manifest">Manifest</button></nav>
+<div class="manifest-body"><div class="manifest-card"><p>Made with love and respect to rollerblading. Made for community. Made to assist, not to waste time. Made in Ukraine between blackouts, and air alarms while russian bombs striking Kyiv and killing innocent civilians daily. Use it free and enjoy what you have.</p></div></div>
+</section>
+<div id="statusbar" class="statusbar"><span id="statusMessage">Ready</span><span id="statusMode">Choose a mode</span></div>
 <div id="grindPopup" class="popup" hidden>
 <div class="popup-card" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
 <div class="popup-head"><div><h2 id="popupTitle"></h2><p id="popupInfo"></p></div><button id="popupClose" class="popup-close" type="button" aria-label="Close">&times;</button></div>

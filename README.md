@@ -14,12 +14,30 @@ combination. The **Rules** tab has the rules in Ukrainian (UA) and English (ENG)
 
 Open `index.html` in a browser, or publish the folder with GitHub Pages.
 
+## Visual styles: 2026 and 1998
+
+A **Time machine** toggle at the top left of the main (mode) page switches the whole site between two looks. The **Manifest** button on the same line (top right) opens the Manifest page; its **Mode** tab goes back to the main page. The choice is
+remembered in the browser (`localStorage`, key `blade-era`).
+
+- **2026** - the current look (light and dark theme follow the phone setting).
+- **1998** - a Windows 98 look on every page: teal desktop, a grey window with a blue title bar (the close button
+  returns to the mode page) and a status bar, raised and pressed buttons, tabs, group boxes with real-looking
+  checkboxes, the dice as bevelled grey blocks (the rolled side is selected in navy) on a Solitaire-green table, the
+  result in a green-on-black display, a white "document" for the rules, modal popups over a dithered screen and
+  Windows-style scrollbars. The mode page also has a visitor counter and a "Best viewed in Internet Explorer 4.0" note.
+
+How it works: `script.js` (section 10) sets `data-era` on the `<html>` element; all 1998 rules in `style.css` start with
+`html[data-era="1998"]`, so the 2026 look is not touched. The result display uses the free Google font VT323 (with a
+Courier fallback); everything else uses system fonts.
+
 ## Modes
 
 - **Classic** - two real six-sided dice with fixed words on the sides.
 - **Custom** - three "slot-like" dice (Before, Grind, After). Every die shows one value from a list that depends on
   the checkboxes and on the rolled grind. The two visible side faces show the neighbouring values of the list.
 - **Switch-up** and **Goat mode** - not available yet.
+
+The bottom of the mode page has a quote in italics (`<figure class="quote">` in `index.html`). In the 1998 style it is shown as a "Quote of the day" group box.
 
 ## Custom mode: how a combination is calculated
 
@@ -107,6 +125,14 @@ with its list. The checkbox stays checked.
   are currently checked (regular grinds first). The list uses several columns when the screen is short.
 - **Before and After checkboxes:** the values, the grinds they can be used with and the conditions (backside, stall).
 - Close with the X, the dark background or Esc.
+
+## Copy the combination
+
+After a roll has landed, a copy button appears in the top-right corner of the result area. It copies the final combination as
+one line, in dice order, for example `Zero spin + Backside Unity + Backward` (Custom mode) or `Soul Acid + Switch` (Classic
+mode). A "Copied" label and a check mark confirm it (or "Copy failed"). The button is hidden while the dice roll and when
+no result is shown. It uses the Clipboard API with a fallback for browsers or embedded views without it
+(`copyTextToClipboard` in `script.js`).
 
 ## Easter egg pictures
 
